@@ -164,9 +164,8 @@ Once you've completed the setup:
 3. Review Chapter 2 for understanding cloud-native architecture
 
 ## Support Resources
-- Workshop Slack Channel: [Link]
-- Technical Documentation Repository: [Link]
+- Workshop WhatsApp Channel: https://chat.whatsapp.com/JIA5s2kJEgH50TAvDl4UzH
+- Technical Documentation Repository: https://github.com/mdzaman/code-ninja/
 - Stack Overflow: https://stackoverflow.com/
 - Official tool documentation links
 
-Need help? Contact our workshop support team at [email/contact info].
