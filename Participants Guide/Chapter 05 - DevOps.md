@@ -255,6 +255,392 @@ export async function runSecurityScan(targetUrl: string) {
 }
 ```
 
+# Chapter 5 Addition: Global Compliance and Privacy Monitoring
+
+## 1. Compliance Dashboard Implementation
+
+### 1.1 Compliance Tracking Service
+```typescript
+// src/services/compliance-service.ts
+export class ComplianceService {
+  private readonly dynamodb: AWS.DynamoDB.DocumentClient;
+  private readonly cloudwatch: AWS.CloudWatch;
+  private readonly s3: AWS.S3;
+
+  // Compliance frameworks supported
+  private readonly frameworks = {
+    GDPR: ['data_access', 'data_deletion', 'consent_management'],
+    HIPAA: ['phi_access', 'encryption', 'audit_logs'],
+    SOC2: ['security', 'availability', 'confidentiality'],
+    CCPA: ['data_disclosure', 'opt_out', 'data_sale'],
+    PCI: ['card_data', 'encryption', 'access_control']
+  };
+
+  async generateComplianceReport(framework: string, startDate: string, endDate: string) {
+    const complianceData = await this.gatherComplianceData(framework, startDate, endDate);
+    const report = this.formatComplianceReport(complianceData);
+    
+    // Store report in S3 with encryption
+    await this.s3.putObject({
+      Bucket: process.env.COMPLIANCE_BUCKET!,
+      Key: `reports/${framework}/${startDate}-${endDate}.json`,
+      Body: JSON.stringify(report),
+      ServerSideEncryption: 'AES256'
+    }).promise();
+
+    return report;
+  }
+
+  private async gatherComplianceData(framework: string, startDate: string, endDate: string) {
+    // Gather data based on framework requirements
+    switch(framework) {
+      case 'GDPR':
+        return this.gatherGDPRData(startDate, endDate);
+      case 'HIPAA':
+        return this.gatherHIPAAData(startDate, endDate);
+      // Add other frameworks
+    }
+  }
+}
+```
+
+### 1.2 Data Privacy Dashboard Component
+```typescript
+// src/components/compliance/PrivacyDashboard.tsx
+import React from 'react';
+import { ComplianceMetrics } from './ComplianceMetrics';
+import { DataLocationMap } from './DataLocationMap';
+import { ConsentManagement } from './ConsentManagement';
+
+export const PrivacyDashboard: React.FC = () => {
+  return (
+    <div className="grid grid-cols-12 gap-4">
+      <div className="col-span-12">
+        <h1 className="text-2xl font-bold">Data Privacy & Compliance Dashboard</h1>
+      </div>
+      
+      {/* Data Sovereignty Map */}
+      <div className="col-span-12 lg:col-span-8">
+        <DataLocationMap />
+      </div>
+
+      {/* Compliance Metrics */}
+      <div className="col-span-12 lg:col-span-4">
+        <ComplianceMetrics />
+      </div>
+
+      {/* Consent Management */}
+      <div className="col-span-12">
+        <ConsentManagement />
+      </div>
+    </div>
+  );
+};
+```
+
+## 2. Audit Trail System
+
+### 2.1 User Activity Tracking
+```typescript
+// src/services/audit-service.ts
+export class AuditService {
+  private readonly elasticsearch: AWS.ES;
+  private readonly sns: AWS.SNS;
+
+  async logUserActivity(activity: UserActivity) {
+    const auditLog = {
+      timestamp: new Date().toISOString(),
+      userId: activity.userId,
+      tenantId: activity.tenantId,
+      action: activity.action,
+      resource: activity.resource,
+      ipAddress: activity.ipAddress,
+      location: await this.getGeoLocation(activity.ipAddress),
+      metadata: activity.metadata,
+      sensitiveDataAccessed: this.checkSensitiveData(activity)
+    };
+
+    // Store in Elasticsearch for searching
+    await this.elasticsearch.index({
+      index: 'audit-logs',
+      body: auditLog
+    }).promise();
+
+    // If sensitive data was accessed, send notification
+    if (auditLog.sensitiveDataAccessed) {
+      await this.notifySecurityTeam(auditLog);
+    }
+
+    return auditLog;
+  }
+
+  async generateAuditReport(filters: AuditFilters) {
+    const auditData = await this.elasticsearch.search({
+      index: 'audit-logs',
+      body: this.buildAuditQuery(filters)
+    }).promise();
+
+    return this.formatAuditReport(auditData);
+  }
+}
+```
+
+### 2.2 Audit Dashboard Component
+```typescript
+// src/components/audit/AuditDashboard.tsx
+import React from 'react';
+import { AuditTimeline } from './AuditTimeline';
+import { UserActivityMap } from './UserActivityMap';
+import { RiskMetrics } from './RiskMetrics';
+
+export const AuditDashboard: React.FC = () => {
+  return (
+    <div className="grid grid-cols-12 gap-4">
+      <div className="col-span-12 lg:col-span-8">
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold mb-4">User Activity Timeline</h2>
+          <AuditTimeline />
+        </div>
+      </div>
+
+      <div className="col-span-12 lg:col-span-4">
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold mb-4">Risk Assessment</h2>
+          <RiskMetrics />
+        </div>
+      </div>
+
+      <div className="col-span-12">
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold mb-4">Global Activity Map</h2>
+          <UserActivityMap />
+        </div>
+      </div>
+    </div>
+  );
+};
+```
+
+## 3. Data Sovereignty Management
+
+### 3.1 Data Location Service
+```typescript
+// src/services/data-location-service.ts
+export class DataLocationService {
+  private readonly dynamodb: AWS.DynamoDB.DocumentClient;
+  private readonly s3: AWS.S3;
+
+  async trackDataLocation(data: DataLocationInfo) {
+    const locationRecord = {
+      dataId: data.id,
+      tenantId: data.tenantId,
+      region: data.region,
+      dataType: data.type,
+      classification: data.classification,
+      retentionPeriod: data.retention,
+      lastAccessed: new Date().toISOString(),
+      regulatoryRequirements: this.getRegulationsByRegion(data.region)
+    };
+
+    await this.dynamodb.put({
+      TableName: process.env.DATA_LOCATION_TABLE!,
+      Item: locationRecord
+    }).promise();
+
+    return locationRecord;
+  }
+
+  async validateDataTransfer(source: string, destination: string, dataType: string) {
+    const regulations = await this.getDataTransferRegulations(source, destination);
+    return this.evaluateTransferCompliance(regulations, dataType);
+  }
+}
+```
+
+### 3.2 Compliance Report Generator
+```typescript
+// src/services/report-generator.ts
+export class ComplianceReportGenerator {
+  async generateReport(reportType: string, parameters: ReportParameters) {
+    const report = {
+      timestamp: new Date().toISOString(),
+      type: reportType,
+      period: parameters.period,
+      data: await this.gatherReportData(reportType, parameters),
+      summary: {
+        complianceScore: 0,
+        violations: [],
+        recommendations: []
+      }
+    };
+
+    // Calculate compliance score
+    report.summary.complianceScore = this.calculateComplianceScore(report.data);
+    
+    // Generate recommendations
+    report.summary.recommendations = this.generateRecommendations(report.data);
+
+    // Store report
+    await this.storeReport(report);
+
+    return report;
+  }
+
+  private async gatherReportData(reportType: string, parameters: ReportParameters) {
+    switch (reportType) {
+      case 'gdpr':
+        return this.gatherGDPRData(parameters);
+      case 'hipaa':
+        return this.gatherHIPAAData(parameters);
+      case 'pci':
+        return this.gatherPCIData(parameters);
+      default:
+        throw new Error(`Unsupported report type: ${reportType}`);
+    }
+  }
+}
+```
+
+## 4. Privacy Impact Assessment
+
+### 4.1 Privacy Assessment Service
+```typescript
+// src/services/privacy-assessment-service.ts
+export class PrivacyAssessmentService {
+  async performAssessment(systemId: string) {
+    const assessment = {
+      id: uuid(),
+      systemId,
+      timestamp: new Date().toISOString(),
+      dataCollectionPractices: await this.assessDataCollection(systemId),
+      dataProcessing: await this.assessDataProcessing(systemId),
+      dataSharing: await this.assessDataSharing(systemId),
+      risks: await this.identifyRisks(systemId),
+      mitigations: [],
+      score: 0
+    };
+
+    assessment.mitigations = this.recommendMitigations(assessment.risks);
+    assessment.score = this.calculatePrivacyScore(assessment);
+
+    await this.storeAssessment(assessment);
+    return assessment;
+  }
+
+  private async assessDataCollection(systemId: string) {
+    // Assess data collection practices
+    // Return assessment results
+  }
+}
+```
+
+### 4.2 Privacy Dashboard
+```typescript
+// src/components/privacy/PrivacyDashboard.tsx
+import React from 'react';
+import { PrivacyMetrics } from './PrivacyMetrics';
+import { ConsentManager } from './ConsentManager';
+import { DataFlowMap } from './DataFlowMap';
+
+export const PrivacyDashboard: React.FC = () => {
+  return (
+    <div className="privacy-dashboard">
+      <div className="metrics-section">
+        <PrivacyMetrics />
+      </div>
+      <div className="consent-section">
+        <ConsentManager />
+      </div>
+      <div className="data-flow-section">
+        <DataFlowMap />
+      </div>
+    </div>
+  );
+};
+```
+
+## 5. Real-time Compliance Monitoring
+
+### 5.1 Compliance Monitor Service
+```typescript
+// src/services/compliance-monitor-service.ts
+export class ComplianceMonitorService {
+  private readonly eventBridge: AWS.EventBridge;
+
+  async monitorCompliance() {
+    const rules = [
+      {
+        name: 'DataAccessMonitoring',
+        pattern: {
+          source: ['aws.dynamodb', 'custom.dataaccess'],
+          detail: {
+            eventType: ['DataAccess', 'DataModification']
+          }
+        }
+      },
+      {
+        name: 'UserAuthenticationMonitoring',
+        pattern: {
+          source: ['aws.cognito'],
+          detail: {
+            eventType: ['Authentication']
+          }
+        }
+      }
+    ];
+
+    for (const rule of rules) {
+      await this.createMonitoringRule(rule);
+    }
+  }
+
+  private async createMonitoringRule(rule: ComplianceRule) {
+    await this.eventBridge.putRule({
+      Name: rule.name,
+      EventPattern: JSON.stringify(rule.pattern)
+    }).promise();
+  }
+}
+```
+
+## 6. Automated Report Generation
+
+### 6.1 Report Generator Service
+```typescript
+// src/services/report-generator-service.ts
+export class ReportGeneratorService {
+  async generateComplianceReport(parameters: ReportParameters) {
+    const report = await this.gatherReportData(parameters);
+    
+    // Generate PDF report
+    const pdf = await this.generatePDF(report);
+    
+    // Store report
+    await this.storeReport(pdf, parameters);
+    
+    // Send notifications
+    await this.notifyStakeholders(parameters);
+    
+    return report;
+  }
+
+  private async gatherReportData(parameters: ReportParameters) {
+    // Gather all necessary data for the report
+    const data = {
+      privacyMetrics: await this.gatherPrivacyMetrics(parameters),
+      auditLogs: await this.gatherAuditLogs(parameters),
+      complianceScores: await this.calculateComplianceScores(parameters),
+      violations: await this.gatherViolations(parameters),
+      recommendations: await this.generateRecommendations(parameters)
+    };
+    
+    return data;
+  }
+}
+```
+
+
+
 ## Learning Resources for Tools
 
 ### Infrastructure as Code
@@ -315,4 +701,5 @@ export async function runSecurityScan(targetUrl: string) {
    - DevOps Weekly Newsletter: https://www.devopsweekly.com/
    - The New Stack: https://thenewstack.io/
 
-Would you like me to dive deeper into any specific tool or create the next chapter focusing on advanced features and integrations?
+
+
