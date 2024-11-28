@@ -304,4 +304,3 @@ export class ChaosTest {
 3. **Test Automation University**
    - Applitools: https://www.youtube.com/c/TestAutomationUniversity
 
-Would you like me to expand on any particular aspect of testing or continue with Chapter 10, which could focus on deployment strategies and DevOps practices?
