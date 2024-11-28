@@ -384,3 +384,115 @@ export const trace = async (name: string, fn: () => Promise<any>) => {
    - ESLint
    - Prettier
    - Husky (git hooks)
+  
+# Learning Resources for Cloud-Native Development
+
+## Core Development Skills
+
+### TypeScript & JavaScript
+- **Traversy Media - TypeScript Crash Course**: https://www.youtube.com/watch?v=BCg4U1FzODs
+- **Ben Awad - TypeScript for Beginners**: https://www.youtube.com/watch?v=Z5iWr6Srsj8
+- **Fireship - TypeScript in 100 Seconds**: https://www.youtube.com/watch?v=zQnBQ4tB3ZA
+- **Jack Herrington - No BS TS Series**: https://www.youtube.com/watch?v=LKVHFHJsiO0&list=PLNqp92_EXZBJYFrpEzdO2EapvU0GOJ09n
+
+### AWS & Cloud Development
+- **freeCodeCamp - AWS Certified Developer Course**: https://www.youtube.com/watch?v=RrKRN9zRBWs
+- **TechWorld with Nana - AWS Basics**: https://www.youtube.com/watch?v=ZB5ONbD_SMY
+- **Be A Better Dev - AWS Serverless**: https://www.youtube.com/watch?v=8VHhkYfYID8
+- **AWS Events Channel - re:Invent Serverless Sessions**: https://www.youtube.com/c/AWSEventsChannel
+
+## Development Tools
+
+### Docker & Containers
+- **TechWorld with Nana - Docker Tutorial**: https://www.youtube.com/watch?v=3c-iBn73dDE
+- **Fireship - Docker in 100 Seconds**: https://www.youtube.com/watch?v=Gjnup-PuquQ
+- **Container From Scratch - Liz Rice**: https://www.youtube.com/watch?v=8fi7uSYlOdc
+
+### Testing
+- **Kent C. Dodds - Testing JavaScript**: https://www.youtube.com/watch?v=m4-HM_sCvtQ
+- **Jest Crash Course - Traversy Media**: https://www.youtube.com/watch?v=7r4xVDI2vho
+- **Testing with AWS SDK - Complete Coding**: https://www.youtube.com/watch?v=4PH6s7HfFeQ
+
+## Cloud Services & Tools
+
+### AWS Lambda & Serverless
+- **Serverless with AWS - Stephane Maarek**: https://www.youtube.com/watch?v=jiE3UkRelE4
+- **AWS Lambda - Tech with Lucy**: https://www.youtube.com/watch?v=cI16T7GOPwM
+- **James Beswick - AWS Serverless Office Hours**: https://www.youtube.com/playlist?list=PLJo-rJlep0ED198FJnTzhIB5Aut_1vDAd
+
+### DynamoDB
+- **Alex DeBrie - DynamoDB Deep Dive**: https://www.youtube.com/watch?v=HaEPXoXVf2k
+- **NoSQL Workbench - Be A Better Dev**: https://www.youtube.com/watch?v=kQi4P_Xf4os
+- **Rick Houlihan - Advanced DynamoDB Design**: https://www.youtube.com/watch?v=HaEPXoXVf2k
+
+### AWS CDK
+- **Matt Coulter - CDK Patterns**: https://www.youtube.com/c/CDKPatterns
+- **Complete AWS CDK Tutorial - Be A Better Dev**: https://www.youtube.com/watch?v=T-H4nJQyMig
+- **AWS CDK Workshop - freeCodeCamp**: https://www.youtube.com/watch?v=T-H4nJQyMig
+
+## Security & Best Practices
+
+### AWS Security
+- **AWS Security Best Practices - AWS Events**: https://www.youtube.com/watch?v=mhkOvYWvc5Y
+- **AWS Security Fundamentals - Digital Cloud Training**: https://www.youtube.com/watch?v=3n0nYqPYbUg
+- **Security in Serverless - Yan Cui**: https://www.youtube.com/watch?v=CiyZfg4e_JE
+
+### Performance & Optimization
+- **AWS Performance Optimization - Adrian Cantrill**: https://www.youtube.com/watch?v=jKO8hH8B8YQ
+- **Serverless Performance - Yan Cui**: https://www.youtube.com/watch?v=H3qyYxmpmvk
+- **DynamoDB Performance Best Practices - AWS Events**: https://www.youtube.com/watch?v=q81TVuV5u28
+
+## Monitoring & Observability
+
+### AWS CloudWatch
+- **AWS CloudWatch Complete Tutorial - Be A Better Dev**: https://www.youtube.com/watch?v=k4WSGWuOMKw
+- **CloudWatch Insights - Digital Cloud Training**: https://www.youtube.com/watch?v=ZU_tYR4J_yM
+
+### AWS X-Ray
+- **AWS X-Ray Tutorial - Be A Better Dev**: https://www.youtube.com/watch?v=5lNfsuy1V5Y
+- **Distributed Tracing - AWS Events**: https://www.youtube.com/watch?v=RvCcWFpQHHY
+
+## Industry Leaders to Follow
+
+### AWS Community Builders & Heroes
+1. **Forrest Brazeal**: AWS Serverless Hero
+   - YouTube: https://www.youtube.com/c/ForrestBrazeal
+
+2. **Ben Kehoe**: AWS Serverless Hero
+   - Twitter: @ben11kehoe
+
+3. **Yan Cui**: AWS Serverless Hero
+   - YouTube: https://www.youtube.com/c/YanCui
+
+### Technical Influencers
+1. **Fireship**
+   - Channel: https://www.youtube.com/c/Fireship
+
+2. **TechWorld with Nana**
+   - Channel: https://www.youtube.com/c/TechWorldwithNana
+
+3. **Be A Better Dev**
+   - Channel: https://www.youtube.com/c/BeABetterDev
+
+## Additional Resources
+
+### Official AWS Training
+- **AWS Skill Builder**: https://skillbuilder.aws
+- **AWS Training YouTube**: https://www.youtube.com/user/AWSwebinars
+
+### Community Resources
+- **ServerlessLand**: https://serverlessland.com
+- **AWS Workshop Studio**: https://workshop.aws
+- **AWS Blogs**: https://aws.amazon.com/blogs/aws/
+
+### Newsletters & Podcasts
+1. **Off-by-none**: Weekly Serverless Newsletter
+2. **AWS Morning Brief**: Podcast by Pete Cheslock
+3. **Serverless Chats**: Podcast by Jeremy Daly
+
+Remember to:
+- Check video publish dates for latest content
+- Follow official AWS channels for updates
+- Join AWS-focused Discord communities
+- Participate in AWS community events
+
